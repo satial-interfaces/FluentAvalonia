@@ -22,12 +22,12 @@ internal unsafe class Win32WindowManager
 
         _oldWndProc = GetWindowLongPtrW(Hwnd, GWLP_WNDPROC);
 
-#if NET5_0_OR_GREATER
-        _appWindowRegistry.Add(Hwnd, this);
-        _wndProc = (nint)(delegate* unmanaged<HWND, uint, WPARAM, LPARAM, LRESULT>)&WndProcStatic;
-#else
-        _wndProc = Marshal.GetFunctionPointerForDelegate(WndProc);
-#endif
+// #if NET5_0_OR_GREATER
+//         _appWindowRegistry.Add(Hwnd, this);
+//         _wndProc = (nint)(delegate* unmanaged<HWND, uint, WPARAM, LPARAM, LRESULT>)&WndProcStatic;
+// #else
+//         _wndProc = Marshal.GetFunctionPointerForDelegate(WndProc);
+// #endif
 
         SetWindowLongPtrW(Hwnd, GWLP_WNDPROC, _wndProc);
 
@@ -381,21 +381,21 @@ internal unsafe class Win32WindowManager
         _isMaximized = (sty & WS_MAXIMIZE) == WS_MAXIMIZE;
     }
 
-#if NET5_0_OR_GREATER
-    [UnmanagedCallersOnly]
-    private static LRESULT WndProcStatic(HWND hwnd, uint msg, WPARAM wParam, LPARAM lParam)
-    {
-        if (_appWindowRegistry.TryGetValue(hwnd, out var wnd))
-        {
-            return wnd.WndProc(hwnd, msg, wParam, lParam);
-        }
+// #if NET5_0_OR_GREATER
+//     [UnmanagedCallersOnly]
+//     private static LRESULT WndProcStatic(HWND hwnd, uint msg, WPARAM wParam, LPARAM lParam)
+//     {
+//         if (_appWindowRegistry.TryGetValue(hwnd, out var wnd))
+//         {
+//             return wnd.WndProc(hwnd, msg, wParam, lParam);
+//         }
 
-        return 0;
-    }
+//         return 0;
+//     }
 
-    private static Dictionary<HWND, Win32WindowManager> _appWindowRegistry =
-        new Dictionary<HWND, Win32WindowManager>();
-#endif
+//     private static Dictionary<HWND, Win32WindowManager> _appWindowRegistry =
+//         new Dictionary<HWND, Win32WindowManager>();
+// #endif
 
     private readonly AppWindow _window;
     private bool _fakingMaximizeButton;
